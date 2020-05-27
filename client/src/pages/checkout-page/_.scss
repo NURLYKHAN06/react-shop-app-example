@@ -22,19 +22,31 @@
       }
     }
   }
-
-  button {
-    margin-left: auto;
+  .wrapper {
+    display: flex;
+    flex-direction: column;
     margin-top: 50px;
+
+    button {
+      margin-bottom: 4px;
+      margin-left: auto;
+      cursor: not-allowed;
+    }
+
+    & > span {
+      font-size: 24px;
+      color: rgb(153, 153, 153);
+      text-transform: uppercase;
+    }
   }
 
   .total {
     margin-top: 30px;
     font-size: 36px;
     text-align: right;
+    width: 100%;
   }
-  .test-warning {
-    text-align: center;
+  .text-warning {
     margin-top: 40px;
     font-size: 24px;
     color: red;

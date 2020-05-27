@@ -1,10 +1,16 @@
 import React from "react";
 import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
+import { createStructuredSelector } from "reselect";
 
-const StripeCheckoutButton = ({ price }) => {
+import { useDispatch, connect } from "react-redux";
+import { SnackbarActionTypes } from "../../redux/snackbar/snackbar.reducer";
+import { selectCurrentUser } from "../../redux/user/user.selector";
+
+const StripeCheckoutButton = ({ price, currentUser }) => {
   const priceForStripe = price * 100;
   const publishableKey = "pk_test_l7ZySpZdmDiQySoeXMxL07dW00sC8fDVbK";
+  const dispatch = useDispatch();
 
   const onToken = (token) => {
     axios({
@@ -16,30 +22,48 @@ const StripeCheckoutButton = ({ price }) => {
       },
     })
       .then(() => {
-        alert("Payment successfol!");
+        dispatch({
+          type: SnackbarActionTypes.SNACKBAR_ON,
+          payload: {
+            type: "success",
+            message: "Payment successful!",
+          },
+        });
       })
       .catch((error) => {
         console.log("Payment error", error);
-        alert(
-          "There was an isuue with your payment. Please sure you use the provided credit cart."
-        );
+        dispatch({
+          type: SnackbarActionTypes.SNACKBAR_ON,
+          payload: {
+            type: "error",
+            message: "Please sure you use the provided credit cart.",
+          },
+        });
       });
   };
 
   return (
-    <StripeCheckout
-      label="Pay Now"
-      name="CRWN Clothing Ltd."
-      billingAddress
-      shippingAddress
-      image="https:/svgshare.com/i/CUz.svg"
-      description={`Your total is $${price}`}
-      amount={priceForStripe}
-      panelLabel="Pay Now"
-      token={onToken}
-      stripeKey={publishableKey}
-    />
+    <div className="wrapper">
+      <StripeCheckout
+        label="Pay Now"
+        name="CRWN Clothing Ltd."
+        billingAddress
+        shippingAddress
+        image="https:/svgshare.com/i/CUz.svg"
+        description={`Your total is $${price}`}
+        amount={priceForStripe}
+        panelLabel="Pay Now"
+        token={onToken}
+        disabled={!currentUser}
+        stripeKey={publishableKey}
+      />
+      {!currentUser && <span>SIGN IN TO PAY </span>}
+    </div>
   );
 };
 
-export default StripeCheckoutButton;
+const mapState = createStructuredSelector({
+  currentUser: selectCurrentUser,
+});
+
+export default connect(mapState)(StripeCheckoutButton);
