@@ -17,7 +17,9 @@ import {
   SnackbarActionTypes,
 } from "./redux/snackbar/snackbar.reducer";
 
-const App = ({ setCurrentUser, snackbar, clearSnackbar }) => {
+import { GlobalStyle } from "./global.styles";
+
+const App = ({ setCurrentUser, snackbar, clearSnackbar, ...props }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
@@ -49,6 +51,7 @@ const App = ({ setCurrentUser, snackbar, clearSnackbar }) => {
 
   return (
     <div>
+      <GlobalStyle />
       <Header />
       {snackbar.type && <h1>{snackbar.message}</h1>}
       <button
@@ -73,11 +76,7 @@ const App = ({ setCurrentUser, snackbar, clearSnackbar }) => {
           exact
           path="/signin"
           render={() =>
-            this.props.currentUser ? (
-              <Redirect to="/" />
-            ) : (
-              <SignInAndSignUpPage />
-            )
+            props.currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
           }
         />
       </Switch>

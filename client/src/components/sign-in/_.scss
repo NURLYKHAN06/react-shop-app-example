@@ -10,5 +10,17 @@
   .buttons {
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 800px) {
+      button {
+        padding: 0 15px 0 15px;
+        min-width: 100px;
+      }
+    }
+  }
+
+  @media (max-width: 800px) {
+    width: unset;
+    padding: 0 10px;
   }
 }

@@ -5,15 +5,17 @@ import CustomButton from "../custom-button/custom-button.component";
 
 import { auth, createUserProfileDocument } from "../../firebase/firebase.utils";
 
+import "./_.scss";
+
 class SignUp extends React.Component {
   state = {
     displayName: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   };
 
-  handleSubmit = async ev => {
+  handleSubmit = async (ev) => {
     ev.preventDefault();
 
     const { displayName, email, password, confirmPassword } = this.state;
@@ -35,14 +37,14 @@ class SignUp extends React.Component {
         displayName: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
       });
     } catch (error) {
       console.error(error);
     }
   };
 
-  handleChange = ev => {
+  handleChange = (ev) => {
     const { name, value } = ev.target;
 
     this.setState({ [name]: value });
