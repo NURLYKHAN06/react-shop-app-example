@@ -9,37 +9,23 @@ import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up
 import Header from "./components/header/header.component";
 import CheckoutPage from "./pages/checkout-page/checkout.component";
 
-import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-import { setCurrentUser } from "./redux/user/user.actions";
-import { selectCurrentUser } from "./redux/user/user.selector";
 import {
   selectSnackbar,
   SnackbarActionTypes,
 } from "./redux/snackbar/snackbar.reducer";
 
 import { GlobalStyle } from "./global.styles";
+import { selectCurrentUser } from "./redux/user/user.selector";
+import { checkUserSession } from "./redux/user/user.actions";
 
-const App = ({ setCurrentUser, snackbar, clearSnackbar, ...props }) => {
+const App = ({
+  checkUserSession,
+  currentUser,
+  snackbar,
+  clearSnackbar,
+  ...props
+}) => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    const unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
-
-        userRef.onSnapshot((snapShot) => {
-          setCurrentUser({
-            id: snapShot.id,
-            ...snapShot.data(),
-          });
-        });
-      }
-
-      setCurrentUser(userAuth);
-    });
-    return () => {
-      unsubscribeFromAuth();
-    };
-  }, [setCurrentUser]);
 
   useEffect(() => {
     if (snackbar.type) {
@@ -48,6 +34,10 @@ const App = ({ setCurrentUser, snackbar, clearSnackbar, ...props }) => {
       }, 1500);
     }
   }, [snackbar, clearSnackbar]);
+
+  useEffect(() => {
+    checkUserSession();
+  }, [checkUserSession]);
 
   return (
     <div>
@@ -76,7 +66,7 @@ const App = ({ setCurrentUser, snackbar, clearSnackbar, ...props }) => {
           exact
           path="/signin"
           render={() =>
-            props.currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
+            currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
           }
         />
       </Switch>
@@ -85,13 +75,12 @@ const App = ({ setCurrentUser, snackbar, clearSnackbar, ...props }) => {
 };
 
 const mapState = createStructuredSelector({
-  currentUser: selectCurrentUser,
   snackbar: selectSnackbar,
+  currentUser: selectCurrentUser,
 });
 
 const actions = (dispatch) => ({
-  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
-  clearSnackbar: () => dispatch({ type: SnackbarActionTypes.CLEAR_SNACKBAR }),
+  checkUserSession: () => dispatch(checkUserSession()),
 });
 
 export default connect(mapState, actions)(App);
