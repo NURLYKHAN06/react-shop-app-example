@@ -4,9 +4,10 @@ import {
   auth,
   googleProvider,
   createUserProfileDocument,
-  getCurrentuser,
+  getCurrentUser,
 } from "../../firebase/firebase.utils";
 import { signInSuccess, signInFailure, signOut } from "./user.actions";
+import { clearCartItems } from "../cart/cart.actions";
 
 export function* signInWithGoogle() {
   try {
@@ -35,15 +36,16 @@ export function* signInWithEmail({ payload: { email, password } }) {
 export function* signOutUser() {
   yield auth.signOut();
   yield put(signOut());
+  yield put(clearCartItems());
 }
 
 export function* isUserAuthenticated() {
   try {
-    const userAuth = yield getCurrentuser();
+    const userAuth = yield getCurrentUser();
     if (!userAuth) return;
-
     const userRef = yield call(createUserProfileDocument, userAuth);
-    yield userRef.get();
+    const userSnapshot = yield userRef.get();
+    yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
   } catch (error) {
     yield put(signInFailure(error));
   }
@@ -62,7 +64,7 @@ export function* onCheckUserSession() {
 }
 
 export function* onSignOut() {
-  yield takeLatest(UserActionTypes.SIGN_OUT, signOutUser);
+  yield takeLatest(UserActionTypes.SIGN_OUT_START, signOutUser);
 }
 
 export function* userSagas() {
@@ -70,5 +72,6 @@ export function* userSagas() {
     call(onGoogleSignInStart),
     call(onEmailSignInStart),
     call(isUserAuthenticated),
+    call(onSignOut),
   ]);
 }

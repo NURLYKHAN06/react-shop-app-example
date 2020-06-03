@@ -26,3 +26,7 @@ export const checkUserSession = () => ({
 export const signOut = () => ({
   type: UserActionTypes.SIGN_OUT,
 });
+
+export const signOutStart = () => ({
+  type: UserActionTypes.SIGN_OUT_START,
+});
