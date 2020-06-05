@@ -5,6 +5,11 @@ export const SnackbarActionTypes = {
   CLEAR_SNACKBAR: "CLEAR_SNACKBAR",
 };
 
+export const showSnackbar = (payload) => ({
+  type: SnackbarActionTypes.SNACKBAR_ON,
+  payload,
+});
+
 const INITIAL_STATE = {
   message: "",
   type: null,

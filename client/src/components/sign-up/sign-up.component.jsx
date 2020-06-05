@@ -6,6 +6,8 @@ import CustomButton from "../custom-button/custom-button.component";
 import { auth, createUserProfileDocument } from "../../firebase/firebase.utils";
 
 import "./_.scss";
+import { connect } from "react-redux";
+import { showSnackbar } from "../../redux/snackbar/snackbar.reducer";
 
 class SignUp extends React.Component {
   state = {
@@ -21,7 +23,8 @@ class SignUp extends React.Component {
     const { displayName, email, password, confirmPassword } = this.state;
 
     if (password !== confirmPassword) {
-      alert("Password dont match!");
+      const { error } = this.props;
+      error("Password dint much!");
       return;
     }
 
@@ -102,4 +105,8 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp;
+const actions = (dispatch) => ({
+  error: (message) => dispatch(showSnackbar({ type: "error", message })),
+});
+
+export default connect(null, actions)(SignUp);

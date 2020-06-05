@@ -8,6 +8,7 @@ import {
 } from "../../firebase/firebase.utils";
 import { signInSuccess, signInFailure, signOut } from "./user.actions";
 import { clearCartItems } from "../cart/cart.actions";
+import { showSnackbar } from "../snackbar/snackbar.reducer";
 
 export function* signInWithGoogle() {
   try {
@@ -18,6 +19,12 @@ export function* signInWithGoogle() {
     yield put(signInSuccess({ id: userSnapshot, ...userSnapshot.data() }));
   } catch (error) {
     yield put(signInFailure(error));
+    yield put(
+      showSnackbar({
+        type: "error",
+        message: error.message,
+      })
+    );
   }
 }
 
@@ -29,7 +36,13 @@ export function* signInWithEmail({ payload: { email, password } }) {
 
     yield put(signInSuccess({ id: userSnapshot, ...userSnapshot.data() }));
   } catch (error) {
-    put(signInFailure);
+    yield put(signInFailure(error));
+    yield put(
+      showSnackbar({
+        type: "error",
+        message: error.message,
+      })
+    );
   }
 }
 
@@ -48,6 +61,12 @@ export function* isUserAuthenticated() {
     yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
   } catch (error) {
     yield put(signInFailure(error));
+    yield put(
+      showSnackbar({
+        type: "error",
+        message: error.message,
+      })
+    );
   }
 }
 

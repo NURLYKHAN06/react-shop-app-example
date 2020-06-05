@@ -15,7 +15,7 @@ const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 const ShopPage = ({ match, fetchCollectionsStart, isCollectionLoaded }) => {
   useEffect(() => {
     fetchCollectionsStart();
-  });
+  }, [fetchCollectionsStart]);
 
   return (
     <div className="shop-page">

@@ -4,8 +4,8 @@ import axios from "axios";
 import { createStructuredSelector } from "reselect";
 
 import { useDispatch, connect } from "react-redux";
-import { SnackbarActionTypes } from "../../redux/snackbar/snackbar.reducer";
 import { selectCurrentUser } from "../../redux/user/user.selector";
+import { showSnackbar } from "../../redux/snackbar/snackbar.reducer";
 
 const StripeCheckoutButton = ({ price, currentUser }) => {
   const priceForStripe = price * 100;
@@ -22,23 +22,20 @@ const StripeCheckoutButton = ({ price, currentUser }) => {
       },
     })
       .then(() => {
-        dispatch({
-          type: SnackbarActionTypes.SNACKBAR_ON,
-          payload: {
+        dispatch(
+          showSnackbar({
             type: "success",
             message: "Payment successful!",
-          },
-        });
+          })
+        );
       })
-      .catch((error) => {
-        console.log("Payment error", error);
-        dispatch({
-          type: SnackbarActionTypes.SNACKBAR_ON,
-          payload: {
+      .catch(() => {
+        dispatch(
+          showSnackbar({
             type: "error",
             message: "Please sure you use the provided credit cart.",
-          },
-        });
+          })
+        );
       });
   };
 

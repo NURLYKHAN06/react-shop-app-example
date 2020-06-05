@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/es/integration/react";
+import { ToastProvider } from "react-toast-notifications";
 
 import App from "./App";
 
@@ -12,7 +13,9 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <PersistGate persistor={persistor}>
-        <App />
+        <ToastProvider autoDismissTimeout={1500}>
+          <App />
+        </ToastProvider>
       </PersistGate>
     </BrowserRouter>
   </Provider>,
